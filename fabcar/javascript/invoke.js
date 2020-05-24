@@ -195,7 +195,7 @@ async function testJSON(record) {
         test["data"]["PartyCompany"][i]["Name"] = record[i]["Name"];
         test["data"]["PartyCompany"][i]["Party"] = record[i]["Party"];
     }
-    
+    console.log("freddy yonata");
     console.log(test.data);
 }
 
