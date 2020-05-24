@@ -198,6 +198,5 @@ async function testJSON(record) {
     console.log("freddy yonata");
     console.log(test.data);
 }
-tete
 
 main();

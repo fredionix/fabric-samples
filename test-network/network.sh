@@ -324,7 +324,7 @@ function createConsortium() {
 # Bring up the peer and orderer nodes using docker compose.
 function networkUp() {
 
-  checkPrereqs
+  
   # generate artifacts if they don't exist
   if [ ! -d "organizations/peerOrganizations" ]; then
     createOrgs
