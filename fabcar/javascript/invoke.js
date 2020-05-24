@@ -198,7 +198,7 @@ async function testJSON(record) {
     console.log("freddy yonata");
     console.log(test.data);
 }
-dddd
+freddy
 
 
 main();
