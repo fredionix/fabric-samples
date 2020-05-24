@@ -2,28 +2,25 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-'use strict';
-
+const fetch = require("node-fetch");
 const { Gateway, Wallets } = require('fabric-network');
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
 
 
-async function main() {
+async function changeStateStatus(docKey) {
     try {
         // load the network configuration
         const ccpPath = path.resolve(__dirname, '..', '..', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
-        const ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
+        let ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
 
         // Create a new file system based wallet for managing identities.
         const walletPath = path.join(process.cwd(), 'wallet');
         const wallet = await Wallets.newFileSystemWallet(walletPath);
-        console.log(wallet);
         console.log(`Wallet path: ${walletPath}`);
 
         // Check to see if we've already enrolled the user.
         const identity = await wallet.get('appUser');
-        
         if (!identity) {
             console.log('An identity for the user "appUser" does not exist in the wallet');
             console.log('Run the registerUser.js application before retrying');
@@ -35,28 +32,25 @@ async function main() {
         await gateway.connect(ccp, { wallet, identity: 'appUser', discovery: { enabled: true, asLocalhost: true } });
 
         // Get the network (channel) our contract is deployed to.
-        const network = await gateway.getNetwork('mychannel');//tergantung chanel dimana contract itu ada maka baru dicari setelah dapat network dari channel name itu
+        const network = await gateway.getNetwork('mychannel');
+        
 
         // Get the contract from the network.
         const contract = network.getContract('fabcar');
+        //const record = {data :"test"};
+        
+        //await contract.submitTransaction('deleteState', 'DOC8');
+        
+        await contract.submitTransaction('changeDocConfirmed', docKey,'CONFIRMED');
+        console.log('Transaction has been submitted');
 
-        // Evaluate the specified transaction.
-        // queryCar transaction - requires 1 argument, ex: ('queryCar', 'CAR4')
-        // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
-        //const result = await contract.evaluateTransaction('queryAllCars');
-        //const result = await contract.evaluateTransaction('queryCar', 'EXTRACT111');
-        const result = await contract.evaluateTransaction('getHistory', 'EXTRACT111');
-        const doc = JSON.parse(result.toString());
-        //console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
-        console.log(doc[0]);
-        console.log(doc[1]);
-        console.log(doc[2]);
-        console.log(doc[3]);
+        // Disconnect from the gateway.
+        await gateway.disconnect();
 
     } catch (error) {
-        console.error(`Failed to evaluate transaction: ${error}`);
+        console.error(`Failed to submit transaction: ${error}`);
         process.exit(1);
     }
 }
 
-main();
+changeStateStatus('EXTRACT111');

@@ -7,7 +7,7 @@ const { Gateway, Wallets } = require('fabric-network');
 const fs = require('fs');
 const path = require('path');
 
-async function main() {
+async function changeState(docKey) {
     try {
         // load the network configuration
         const ccpPath = path.resolve(__dirname, '..', '..', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
@@ -39,7 +39,7 @@ async function main() {
             data: {
                 PartyCompany : [
                     {
-                        Name : 'PT. Global Currency',
+                        Name : 'PT. Global Intra Talenta',
                         Party : 'A'
                     },
                     {
@@ -91,7 +91,7 @@ async function main() {
                 BaseCurrency :'EUR',
                 
             },
-            status: 'UNVALIDATED',
+            status: 'ISSUED',
         }
 
         // Get the contract from the network.
@@ -111,13 +111,12 @@ async function main() {
         //console.log(record["data"]["InterestRate"][0]["InterestRateCategory"]);
         //console.log(record["data"]["InterestRate"][0]["Currency"])
         
-        await contract.submitTransaction('changeDocData', 'EXTRACT111',record["data"]["PartyCompany"][0]["Name"],record["data"]["PartyCompany"][1]["Name"],record["data"]["MTAPartyA"][0]["Amount"], record["data"]["MTAPartyA"][0]["Amount"], record["data"]["ThresholdPartyA"][0]["Amount"],record["data"]["ThresholdPartyB"][0]["Amount"], record["data"]["BaseCurrency"],record["data"]["InterestRate"][0]["InterestRateCategory"], record["data"]["InterestRate"][0]["Currency"]);
+        await contract.submitTransaction('changeDocData', docKey,record["data"]["PartyCompany"][0]["Name"],record["data"]["PartyCompany"][1]["Name"],record["data"]["MTAPartyA"][0]["Amount"], record["data"]["MTAPartyA"][0]["Amount"], record["data"]["ThresholdPartyA"][0]["Amount"],record["data"]["ThresholdPartyB"][0]["Amount"], record["data"]["BaseCurrency"],record["data"]["InterestRate"][0]["InterestRateCategory"], record["data"]["InterestRate"][0]["Currency"]);
         //testJSON(record.data.PartyCompany);
         //await contract.submitTransaction('deleteState', 'DOC8');
-        console.log(record.data);
         
-        await contract.submitTransaction('changeDocStatus', 'EXTRACT111','VALIDATED');
-        //await contract.submitTransaction('createCar', 'EXTRACT111', 'Macquarie', 'CSA', 'filename111', record["data"]["PartyCompany"][0]["Name"],record["data"]["PartyCompany"][1]["Name"],record["data"]["MTAPartyA"][0]["Amount"], record["data"]["MTAPartyA"][0]["Amount"], record["data"]["ThresholdPartyA"][0]["Amount"],record["data"]["ThresholdPartyB"][0]["Amount"], record["data"]["BaseCurrency"],record["data"]["InterestRate"][0]["InterestRateCategory"], record["data"]["InterestRate"][0]["Currency"]);
+        //await contract.submitTransaction('changeDocStatus', 'EXTRACT111','VALIDATED');
+       // await contract.submitTransaction('createCar', 'EXTRACT111', 'Macquarie', 'CSA', 'filename111', record["data"]["PartyCompany"][0]["Name"],record["data"]["PartyCompany"][1]["Name"],record["data"]["MTAPartyA"][0]["Amount"], record["data"]["MTAPartyA"][0]["Amount"], record["data"]["ThresholdPartyA"][0]["Amount"],record["data"]["ThresholdPartyB"][0]["Amount"], record["data"]["BaseCurrency"],record["data"]["InterestRate"][0]["InterestRateCategory"], record["data"]["InterestRate"][0]["Currency"]);
         console.log('Transaction has been submitted');
 
         // Disconnect from the gateway.
@@ -129,76 +128,6 @@ async function main() {
     }
 }
 
-async function testJSON(record) {
-    const test = {
-        id: 'filename1',
-        type: 'Macquarie',
-        subtype: 'CSA',
-        data: {
-            PartyCompany : [
-                {
-                    Name : 'PT. AAA',
-                    Party : 'C'
-                },
-                {
-                    Name : 'xxx',
-                    Party : 'D'
-                },
-            ],
-            ThresholdPartyA : [{
-                Amount : 1000,
-                Currency : 'USD',
-                SPRatings : 'N/A',
-                MoodysRatings : 'N/A',
-                OtherInfo : 'N/A.'
-            },
-            {
-                Amount : 2000,
-                Currency : 'USD',
-                SPRatings : 'Aa',
-                MoodysRatings : 'N/A',
-                OtherInfo : 'N/A.'
-            }
-            ],
-            ThresholdPartyB : [{
-                Amount : 1500,
-                Currency : 'USD',
-                SPRatings : 'N/A',
-                MoodysRatings : 'N/A',
-                OtherInfo : 'N/A.'
-            }],
-            MTAPartyA : [{
-                Amount : 2000,
-                Currency : 'USD',
-                SPRatings : 'N/A',
-                MoodysRatings : 'N/A',
-                OtherInfo : 'N/A.'
-
-            }],
-            MTAPartyB : [{
-                Amount : 2000,
-                Currency : 'USD',
-                SPRatings : 'N/A',
-                MoodysRatings : 'N/A',
-                OtherInfo : 'N/A.'
-            }],
-            InterestRate :[{
-                InterestRateCategory : 'FEDERAL FUND',
-                Currency : 'USD'
-            }],
-            BaseCurrency :'EUR',
-            
-        },
-        status: 'UNVALIDATED',
-    }
-    for (let i = 0; i < test["data"]["PartyCompany"].length; i++) {
-        test["data"]["PartyCompany"][i]["Name"] = record[i]["Name"];
-        test["data"]["PartyCompany"][i]["Party"] = record[i]["Party"];
-    }
-    
-    console.log(test.data);
-}
 
 
-
-main();
+changeState('EXTRACT0');
